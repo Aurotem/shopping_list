@@ -34,6 +34,9 @@ class _GroceryListState extends State<GroceryList> {
     if (response.statusCode >= 400) {
       throw Exception('Something went wrong. Please try again later.');
     }
+    if (response.body == 'null') {
+      return [];
+    }
 
     final Map<String, dynamic> groceryItemsResponse =
         json.decode(response.body);
@@ -107,29 +110,29 @@ class _GroceryListState extends State<GroceryList> {
                 child: Text(snapshot.error.toString()),
               );
             }
-            if(snapshot.data!.isEmpty) {
-              return const Center(
-                  child: Text('No items added yet.'));
+            if (snapshot.data!.isEmpty) {
+              return const Center(child: Text('No items added yet.'));
             } else {
               return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (ctx, index) => Dismissible(
-                    onDismissed: (direction) {
-                      _removeItem(snapshot.data![index]);
-                    },
-                    key: ValueKey(snapshot.data![index]),
-                    child: ListTile(
-                      title: Text(snapshot.data![index].name),
-                      leading: Container(
-                        width: 24,
-                        height: 24,
-                        color: snapshot.data![index].category.color,
-                      ),
-                      trailing: Text(snapshot.data![index].quantity.toString()),
-                    ),
-                  ));
+                        onDismissed: (direction) {
+                          _removeItem(snapshot.data![index]);
+                        },
+                        key: ValueKey(snapshot.data![index]),
+                        child: ListTile(
+                          title: Text(snapshot.data![index].name),
+                          leading: Container(
+                            width: 24,
+                            height: 24,
+                            color: snapshot.data![index].category.color,
+                          ),
+                          trailing:
+                              Text(snapshot.data![index].quantity.toString()),
+                        ),
+                      ));
             }
-    }),
+          }),
     );
   }
 }
