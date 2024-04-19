@@ -32,6 +32,10 @@ class _GroceryListState extends State<GroceryList> {
 
       final response = await http.get(url);
 
+      if(response.statusCode >= 400) {
+        throw Exception('Something went wrong. Please try again later.');
+      }
+
       final Map<String, dynamic> groceryItemsResponse =
       json.decode(response.body);
       final List<GroceryItem> loadedItems = [];
@@ -90,11 +94,6 @@ class _GroceryListState extends State<GroceryList> {
       child: Text('No items added yet.'),
     );
 
-    if (_isLoading) {
-      content = const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
 
     if (_error != null) {
       content = Center(
@@ -134,7 +133,10 @@ class _GroceryListState extends State<GroceryList> {
       ),
       body: FutureBuilder(future: _loadedItems, builder: (context, snapshot) {
         if(snapshot.connectionState == ConnectionState.waiting) {
-
+          return const Center(child: CircularProgressIndicator(),);
+        }
+        if(snapshot.hasError) {
+          return
         }
       }),
     );
