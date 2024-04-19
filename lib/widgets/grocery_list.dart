@@ -25,14 +25,16 @@ class _GroceryListState extends State<GroceryList> {
     _loadItems();
   }
 
-  Future<List<GroceryItem>> _loadItems() async {
+  void _loadItems() async {
     final url = Uri.https(
         'flutter-prep-b9da6-default-rtdb.europe-west1.firebasedatabase.app',
         'shopping-list.json');
       try {
         final response = await http.get(url);
 
-        if (response.statusCode)
+        if (response.statusCode >= 400) {
+          _error = 'Failed to fetch data. Please try again later.';
+        }
           final Map<String, dynamic> groceryItemsResponse =
           json.decode(response.body);
         final List<GroceryItem> loadedItems = [];
@@ -50,7 +52,7 @@ class _GroceryListState extends State<GroceryList> {
       } catch(error) {
 
       }
-      return loadedItems;
+      return;
 
     }
 
