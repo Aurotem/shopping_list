@@ -16,7 +16,6 @@ class GroceryList extends StatefulWidget {
 
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
-  late Future<List<GroceryItem>> _loadedItems;
   String? _error;
 
   @override
@@ -80,7 +79,10 @@ class _GroceryListState extends State<GroceryList> {
     final url = Uri.https(
         'flutter-prep-b9da6-default-rtdb.europe-west1.firebasedatabase.app',
         'shopping-list/${item.id}.json');
-    _groceryItems.remove(item);
+    setState(() {
+      _groceryItems.remove(item);
+
+    });
 
     final response = await http.delete(url);
     if (response.statusCode >= 400) {
