@@ -16,36 +16,21 @@ class GroceryList extends StatefulWidget {
 
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
-
-  var _isLoading = true;
+  late Future<List<GroceryItem>> _loadedItems;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _loadItems();
+   _loadedItems = _loadItems();
   }
 
-  void _loadItems() async {
+  Future<List<GroceryItem>> _loadItems() async {
     final url = Uri.https(
         'flutter-prep-b9da6-default-rtdb.europe-west1.firebasedatabase.app',
         'shopping-list.json');
 
-    try {
       final response = await http.get(url);
-
-      if (response.statusCode >= 400) {
-        setState(() {
-          _error = 'Failed to fetch. Please try again later.';
-        });
-      }
-      if(response.body == 'null') {
-
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
 
       final Map<String, dynamic> groceryItemsResponse =
       json.decode(response.body);
@@ -61,20 +46,13 @@ class _GroceryListState extends State<GroceryList> {
             quantity: item.value['quantity'],
             category: category));
       }
-      setState(() {
-        _groceryItems = loadedItems;
-        _isLoading = false;
-      });
+      return loadedItems;
 
-    } catch(error) {
-      setState(() {
-        _error = 'Something went wrong. Please try again later.';
-      });
     }
 
 
 
-  }
+
 
   void _addItem() async {
     final newItem = await Navigator.of(context).push<GroceryItem>(
@@ -154,7 +132,11 @@ class _GroceryListState extends State<GroceryList> {
           )
         ],
       ),
-      body: content,
+      body: FutureBuilder(future: _loadedItems, builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting) {
+
+        }
+      }),
     );
   }
 }
