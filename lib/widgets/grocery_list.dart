@@ -15,7 +15,7 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
-  List<GroceryItem> _groceryItems = [];
+  final List<GroceryItem> _groceryItems = [];
   String? _error;
 
   @override
@@ -33,6 +33,7 @@ class _GroceryListState extends State<GroceryList> {
 
         if (response.statusCode >= 400) {
           _error = 'Failed to fetch data. Please try again later.';
+          return;
         }
           final Map<String, dynamic> groceryItemsResponse =
           json.decode(response.body);
@@ -49,10 +50,8 @@ class _GroceryListState extends State<GroceryList> {
               category: category));
         }
       } catch(error) {
-
+        return;
       }
-      return;
-
     }
 
 
